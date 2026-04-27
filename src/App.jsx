@@ -15,6 +15,26 @@ function App() {
     setClientes([...clientes, nuevoCliente])
   }
 
+  const eliminarCliente = (clienteId) => {
+    const listaActualizada = clientes.filter( cliente => 
+      cliente.id !== clienteId
+    );
+
+    setClientes(listaActualizada);
+
+  }
+
+  const actualizarCliente = (clienteActualizado) => {
+    const listaActualizada = clientes.map(cliente => {
+      if(cliente.id === clienteActualizado.id) {
+        return clienteActualizado
+      }
+      return cliente;
+    });
+
+    setClientes(listaActualizada);
+  }
+
   return (
     <div>
       <h1>{nombreApp}</h1>
@@ -31,7 +51,12 @@ function App() {
       <FormularioCliente onClienteAgregado={agregarCliente} />
       <ul>
         {clientes.map((cliente) => (
-              <ClienteItem key={cliente.id} cliente={cliente} />  
+              <ClienteItem 
+                key={cliente.id} 
+                cliente={cliente}
+                onEliminar={eliminarCliente}
+                onGuardar={actualizarCliente} 
+                />  
         ))
         }
       </ul>
