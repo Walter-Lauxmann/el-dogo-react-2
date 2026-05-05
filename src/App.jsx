@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'react';
-import FormularioCliente from './components/FormularioCliente';
-import ClienteItem from './components/ClienteItem';
+import { useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
+/* Componentes */
+import Navegacion from './components/Navegacion';
+import VistaClientes from './components/VistaClientes';
+import VistaMascotas from './components/VistaMascotas';
+import VistaConfiguracion from './components/VistaConfiguracion';
 import Login from './components/Login';
+
 import './App.css'; // Importamos el css
 
 function App() {
-  const [clientes, setClientes] = useState (() => {
-    const datosGuardados = localStorage.getItem('clientesDogo') | [];
-    return datosGuardados ? JSON.parse(datosGuardados) : [];
-  });
-
   const nombreApp = "El Dogo - Gestión de veterinaria";
 
   const [estaLogueado, setEstalogueado] = useState(false);
@@ -18,62 +18,21 @@ function App() {
     setEstalogueado(estado);
   }
 
-  const agregarCliente = (nuevoCliente) => {
-    setClientes([...clientes, nuevoCliente])
-  }
-
-  const eliminarCliente = (clienteId) => {
-    const listaActualizada = clientes.filter( cliente => 
-      cliente.id !== clienteId
-    );
-
-    setClientes(listaActualizada);
-
-  }
-
-  const actualizarCliente = (clienteActualizado) => {
-    const listaActualizada = clientes.map(cliente => {
-      if(cliente.id === clienteActualizado.id) {
-        return clienteActualizado
-      }
-      return cliente;
-    });
-
-    setClientes(listaActualizada);
-  }
-
-  useEffect(() => {
-    console.log('Detectando cambio en la lista de clientes. ¡Guardando!');
-    localStorage.setItem('clientesDogo', JSON.stringify(clientes));
-  }, [clientes]);
-
   return (
     <div>
       <h1>{nombreApp}</h1>
       <p>¡Bienvenido! Acá gestionarás clientes y mascotas</p>
       {estaLogueado ? (
-        <section>
-          <p>Total de clientes registrados: ** { clientes.length } ** </p>
+        <>
+          <Navegacion />
 
-      <section>
-        <h2>Gestión de Clientes</h2>
-        <h2>Gestión de Mascotas</h2>
-      </section>
-      <hr />
-      <h2>Clientes Actuales</h2>
-      <FormularioCliente onClienteAgregado={agregarCliente} />
-      <ul>
-        {clientes.map((cliente) => (
-              <ClienteItem 
-                key={cliente.id} 
-                cliente={cliente}
-                onEliminar={eliminarCliente}
-                onGuardar={actualizarCliente} 
-                />  
-        ))
-        }
-      </ul>
-        </section>
+          <Routes>
+            <Route path="/" element={<VistaClientes />} />
+            <Route path="/mascotas" element={<VistaMascotas />} />
+            <Route path="/config" element={<VistaConfiguracion />} />
+            <Route path="*" element={<h2>404 - Página no encontrada</h2>} />
+          </Routes>
+        </>
       ) : (
         <Login onLoginExitoso={manejadorLogin} />
       )}
