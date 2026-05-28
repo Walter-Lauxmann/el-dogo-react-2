@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 /* Componentes */
 import Navegacion from './components/Navegacion';
 import VistaClientes from './components/VistaClientes';
+import VistaDetalleCliente from './components/VistaDetalleCliente';
 import VistaMascotas from './components/VistaMascotas';
 import VistaConfiguracion from './components/VistaConfiguracion';
 import Login from './components/Login';
@@ -28,6 +29,7 @@ function App() {
 
           <Routes>
             <Route path="/" element={<VistaClientes />} />
+            <Route path="/cliente/:id" element={<VistaDetalleCliente />} />
             <Route path="/mascotas" element={<VistaMascotas />} />
             <Route path="/config" element={<VistaConfiguracion />} />
             <Route path="*" element={<h2>404 - Página no encontrada</h2>} />

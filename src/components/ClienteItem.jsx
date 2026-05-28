@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import { Link } from 'react-router-dom';
 function ClienteItem({ cliente, onEliminar, onGuardar }) {
 
     const [esEdicion, setEsEdicion] = useState(false);
@@ -50,7 +51,7 @@ function ClienteItem({ cliente, onEliminar, onGuardar }) {
                 </form>
             ): (
               <div>
-                **{cliente.nombre}** - Tel: {cliente.telefono} 
+                <Link to={`/cliente/${cliente.id}`}><strong>**{cliente.nombre}**</strong></Link> - Tel: {cliente.telefono} 
                 <button onClick={manejadorEditar}>
                     Editar
                 </button>
