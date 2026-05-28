@@ -1,44 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useContext } from "react";
+import { VeterinariaContext } from "../context/VeterinariaContext";
+
 import FormularioCliente from "./FormularioCliente";
 import ClienteItem from "./ClienteItem";
 
 import styles from './VistaClientes.module.css';
 
 function VistaClientes() {
-
-  const [clientes, setClientes] = useState (() => {
-    const datosGuardados = localStorage.getItem('clientesDogo');
-    return datosGuardados ? JSON.parse(datosGuardados) : [];
-  });
-
-  const agregarCliente = (nuevoCliente) => {
-    setClientes([...clientes, nuevoCliente])
-  }
-
-  const eliminarCliente = (clienteId) => {
-    const listaActualizada = clientes.filter( cliente => 
-      cliente.id !== clienteId
-    );
-
-    setClientes(listaActualizada);
-
-  }
-
-  const actualizarCliente = (clienteActualizado) => {
-    const listaActualizada = clientes.map(cliente => {
-      if(cliente.id === clienteActualizado.id) {
-        return clienteActualizado
-      }
-      return cliente;
-    });
-
-    setClientes(listaActualizada);
-  }
-
-  useEffect(() => {
-    console.log('Detectando cambio en la lista de clientes. ¡Guardando!');
-    localStorage.setItem('clientesDogo', JSON.stringify(clientes));
-  }, [clientes]);
+  const {
+    clientes,
+    agregarCliente,
+    actualizarCliente,
+    eliminarCliente
+  } = useContext(VeterinariaContext);
+  
 
   return (
     <div className={styles.contenedorPrincipal}>

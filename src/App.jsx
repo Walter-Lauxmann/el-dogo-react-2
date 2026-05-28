@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
+/* Proveedores */
+import { VeterinariaProvider } from './context/VeterinariaProvider';
 /* Componentes */
 import Navegacion from './components/Navegacion';
 import VistaClientes from './components/VistaClientes';
@@ -24,7 +26,7 @@ function App() {
       <h1>{nombreApp}</h1>
       <p>¡Bienvenido! Acá gestionarás clientes y mascotas</p>
       {estaLogueado ? (
-        <>
+        <VeterinariaProvider>
           <Navegacion />
 
           <Routes>
@@ -34,7 +36,7 @@ function App() {
             <Route path="/config" element={<VistaConfiguracion />} />
             <Route path="*" element={<h2>404 - Página no encontrada</h2>} />
           </Routes>
-        </>
+        </VeterinariaProvider>
       ) : (
         <Login onLoginExitoso={manejadorLogin} />
       )}
