@@ -12,30 +12,42 @@ function VistaMascotas() {
     mascotas,
     agregarMascota,
     actualizarMascota,
-    eliminarMascota
+    eliminarMascota,
+    isLoading
   } = useContext(VeterinariaContext);
+
+  if (isLoading) {
+    return <p role="status">Cargando mascotas...</p>;
+  }
+
   return (
     <div className={styles.contenedorPrincipal}>
       <section>
         <h2 className={styles.titulo}>Gestión de Mascotas</h2>
-        <p className={styles.contador}>Total de mascotas registradas: ** {mascotas.length} **</p>
+        <p className={styles.contador}>
+          Total de mascotas registradas: {mascotas.length}
+        </p>
         <hr />
         <FormularioMascota
           clientes={clientes}
           onMascotaAgregada={agregarMascota}
         />
         <h2>Mascotas actuales</h2>
-        <ul>
-          {mascotas.map((mascota) => (
-            <MascotaItem 
+        {mascotas.length === 0 ? (
+          <p>Aún no hay mascotas registradas.</p>
+        ) : (
+          <ul>
+            {mascotas.map((mascota) => (
+              <MascotaItem
                 key={mascota.id}
                 clientes={clientes}
                 mascota={mascota}
                 onEliminar={eliminarMascota}
                 onGuardar={actualizarMascota}
-            />
-          ))}
-        </ul>
+              />
+            ))}
+          </ul>
+        )}
       </section>
     </div>
   );

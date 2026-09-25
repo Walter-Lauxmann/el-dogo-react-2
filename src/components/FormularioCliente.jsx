@@ -4,6 +4,7 @@ function FormularioCliente({onClienteAgregado}) {
 
     const [ nombre, setNombre ] = useState('');
     const [ telefono, setTelefono ] = useState('');
+    const [ estaEnviando, setEstaEnviando ] = useState(false);
 
     const manejadorNombre = (e) => {
         setNombre(e.target.value);
@@ -13,48 +14,55 @@ function FormularioCliente({onClienteAgregado}) {
         setTelefono(e.target.value);
     }
 
-    const manejadorEnvio = (e) => {
+    const manejadorEnvio = async (e) => {
         e.preventDefault();
 
         if (nombre.trim() === '' || telefono.trim() === '') {
-            alert ('Por favor, complete los datos');
             return;
         }
 
         const nuevoCliente = {
-            id: Date.now(),
-            nombre: nombre,
-            telefono: telefono
+            nombre: nombre.trim(),
+            telefono: telefono.trim()
         };
 
-        console.log('¡Cliente listo para registrarse!', nuevoCliente);
-
-        onClienteAgregado(nuevoCliente);
-
-
-        setNombre('');
-        setTelefono('');
+        try {
+            setEstaEnviando(true);
+            await onClienteAgregado(nuevoCliente);
+            setNombre('');
+            setTelefono('');
+        } finally {
+            setEstaEnviando(false);
+        }
     };
 
     return (
         <form onSubmit={manejadorEnvio}>
             <h3>Nuevo cliente:</h3>
-            <label htmlFor="">Nombre Completo
-            <input 
+            <label htmlFor="nombre-cliente">Nombre completo</label>
+            <input
+                id="nombre-cliente"
+                name="nombre"
                 type="text"
                 value={nombre}
                 onChange={manejadorNombre}
-                required 
-            /></label>
-            <label htmlFor="">Teléfono:
-            <input 
-                type="tel" 
+                autoComplete="name"
+                required
+            />
+            <label htmlFor="telefono-cliente">Teléfono</label>
+            <input
+                id="telefono-cliente"
+                name="telefono"
+                type="tel"
                 value={telefono}
                 onChange={manejadorTelefono}
+                autoComplete="tel"
                 required
-                /></label>
+            />
 
-            <button type="submit">Registrar Cliente</button>
+            <button type="submit" disabled={estaEnviando}>
+                {estaEnviando ? 'Registrando...' : 'Registrar cliente'}
+            </button>
         </form>
     )
 }

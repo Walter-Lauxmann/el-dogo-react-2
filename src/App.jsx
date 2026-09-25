@@ -1,8 +1,9 @@
-import { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 /* Proveedores */
+import { AutenticacionProvider } from './context/AutenticacionProvider';
 import { VeterinariaProvider } from './context/VeterinariaProvider';
 /* Componentes */
+import { RutaProtegida } from './components/RutaProtegida';
 import Navegacion from './components/Navegacion';
 import VistaClientes from './components/VistaClientes';
 import VistaDetalleCliente from './components/VistaDetalleCliente';
@@ -13,40 +14,68 @@ import Login from './components/Login';
 import './App.css'; // Importamos el css
 
 function App() {
-  const nombreApp = "El Dogo - Gestión de veterinaria";
-
-  const [estaLogueado, setEstalogueado] = useState(false);
-
-  const manejadorLogin = (estado) => {
-    setEstalogueado(estado);
-  }
 
   return (
-    <div>
-      <h1>{nombreApp}</h1>
-      <p>¡Bienvenido! Acá gestionarás clientes y mascotas</p>
-      {estaLogueado ? (
-        <VeterinariaProvider>
-          <Navegacion />
+    // ⭐️ CAPA 1: Proveedor de Autenticación envolviendo TODA la app
+    <AutenticacionProvider>
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+        
+        {/* Definición global de Rutas */}
+        <Routes>
+          
+          {/* 🔓 RUTA PÚBLICA: Pantalla de Login */}
+          <Route 
+            path="/login" 
+            element={
+              <main className="min-h-screen flex items-center justify-center p-4">
+                <Login />
+              </main>
+            } 
+          />
 
-          <Routes>
-            <Route path="/" element={<VistaClientes />} />
-            <Route path="/cliente/:id" element={<VistaDetalleCliente />} />
-            <Route path="/mascotas" element={<VistaMascotas />} />
-            <Route path="/config" element={<VistaConfiguracion />} />
-            <Route path="*" element={<h2>404 - Página no encontrada</h2>} />
-          </Routes>
-        </VeterinariaProvider>
-      ) : (
-        <Login onLoginExitoso={manejadorLogin} />
-      )}
+          {/* 🔐 RUTAS PROTEGIDAS (Zona VIP del sistema) */}
+            {/* Todas las rutas dentro de este bloque pasan primero por el guardia 'RutaProtegida' */}
+          <Route element={<RutaProtegida />}>
+            <Route
+              path="/*"
+              element={
+                // ⭐️ CAPA 2: Proveedor de Datos (VeterinariaProvider) solo activo cuando el usuario está autenticado
+                <VeterinariaProvider>
+                  <header className="sticky top-0 z-50 w-full backdrop-blur-lg bg-white/70 border-b border-slate-200 dark:bg-slate-950/70 dark:border-slate-800">
+                    <Navegacion />
+                  </header>
 
-      {estaLogueado && (
-        <button onClick={() => setEstalogueado(false)}>Salir</button>
-      )}
-      
+                  <main className="container mx-auto px-4 py-8 max-w-7xl">
+                    <Routes>
+                      <Route path="/" element={<Navigate to="/clientes" replace />} />
+                      <Route path="/clientes" element={<VistaClientes />} />
+                      <Route path="/cliente/:id" element={<VistaDetalleCliente />} />
+                      <Route path="/mascotas" element={<VistaMascotas />} />
+                      <Route path="/config" element={<VistaConfiguracion />} />
+                      
+                      {/* Ruta 404 para URLs no encontradas dentro del panel */}
+                      <Route 
+                        path="*" 
+                        element={
+                          <div className="text-center py-20">
+                            <h2 className="text-3xl font-bold text-slate-700 dark:text-slate-200">
+                              404 | Página no encontrada
+                            </h2>
+                          </div>
+                        } 
+                      />
+                    </Routes>
+                  </main>
+                </VeterinariaProvider>
+              }
+            />
+          </Route>
 
-    </div>
+        </Routes>
+      </div>
+    </AutenticacionProvider>
+  
+
   )
 }
 

@@ -11,28 +11,42 @@ function VistaClientes() {
     clientes,
     agregarCliente,
     actualizarCliente,
-    eliminarCliente
+    eliminarCliente,
+    isLoading
   } = useContext(VeterinariaContext);
-  
+
+  if (isLoading) {
+    return (
+      <div className={styles.contenedorPrincipal} role="status">
+        <p>Cargando clientes...</p>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.contenedorPrincipal}>
       <section>
         <h2 className={styles.titulo}>Gestión de Clientes</h2>
-        <p className={styles.contador}>Total de clientes registrados: ** {clientes.length} ** </p>
+        <p className={styles.contador}>
+          Total de clientes registrados: {clientes.length}
+        </p>
         <hr />
         <h2>Clientes Actuales</h2>
         <FormularioCliente onClienteAgregado={agregarCliente} />
-        <ul>
-          {clientes.map((cliente) => (
-            <ClienteItem
-              key={cliente.id}
-              cliente={cliente}
-              onEliminar={eliminarCliente}
-              onGuardar={actualizarCliente}
-            />
-          ))}
-        </ul>
+        {clientes.length === 0 ? (
+          <p>Aún no hay clientes registrados.</p>
+        ) : (
+          <ul>
+            {clientes.map((cliente) => (
+              <ClienteItem
+                key={cliente.id}
+                cliente={cliente}
+                onEliminar={eliminarCliente}
+                onGuardar={actualizarCliente}
+              />
+            ))}
+          </ul>
+        )}
       </section>
     </div>
   );
